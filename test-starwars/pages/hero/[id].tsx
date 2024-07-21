@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { Box, Button, Heading } from "@chakra-ui/react";
+import { Box, Button, Heading, Progress, Spinner } from "@chakra-ui/react";
 import ReactFlow, {
   MiniMap,
   Controls,
@@ -14,6 +14,7 @@ import ReactFlow, {
 import "react-flow-renderer/dist/style.css";
 import { getHeroDetails } from "../../api/api";
 import { useRouter } from "next/router";
+import { StarWarsIcon } from "@/icons/StarWarsIcon";
 
 interface HeroDetailProps {
   heroUrl: string;
@@ -64,7 +65,7 @@ const HeroDetail: React.FC<HeroDetailProps> = ({ heroUrl }) => {
       setNodes((nds) => [
         {
           id: "1",
-          data: { label: heroResponse.name }, // hero 
+          data: { label: heroResponse.name }, // hero
           position: { x: 450, y: 5 },
         },
         ...formattedFilms, // hero films
@@ -72,17 +73,18 @@ const HeroDetail: React.FC<HeroDetailProps> = ({ heroUrl }) => {
       ]);
 
       const updatedEdges = [
-        ...formattedFilms.map((film: Edge) => ({ 
+        ...formattedFilms.map((film: Edge) => ({
           id: `e1-${film.id}`,
           source: "1",
           target: film.id,
         })), // There are connections from the hero to the films in which he appears.
-        ...formattedFilms.flatMap((film: Edge) =>
-          formattedStarships.map((starship: Edge) => ({
-            id: `e-${film.id}-${starship.id}`,
-            source: film.id,
-            target: starship.id,
-          })) // From each film there are links to spaceships on which the hero traveled
+        ...formattedFilms.flatMap(
+          (film: Edge) =>
+            formattedStarships.map((starship: Edge) => ({
+              id: `e-${film.id}-${starship.id}`,
+              source: film.id,
+              target: starship.id,
+            })) // From each film there are links to spaceships on which the hero traveled
         ),
       ];
 
@@ -96,21 +98,37 @@ const HeroDetail: React.FC<HeroDetailProps> = ({ heroUrl }) => {
     router.push("/");
   };
 
-  if (!heroData) return <Heading padding={'25px'}>Loading...</Heading>; // Small Loading Handling
+  if (!heroData)
+    return (
+      <Heading padding={"25px"}>
+        Loading...
+        <Progress size="xs" hasStripe isIndeterminate colorScheme="purple" />
+      </Heading>
+    ); // Small Loading Handling
 
   return (
-    <Box height="95vh" width="100%">
-      <Button onClick={handleBack} ml={"20px"} mt={'20px'}>
-        Back
-      </Button>
+    <Box height="100vh" width="100%">
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        paddingInline="30px"
+        position='absolute'
+        width={'100%'}
+      >
+        <Button colorScheme="red" onClick={handleBack} zIndex='100'>
+          Back to the list
+        </Button>
+        <StarWarsIcon handleClick={handleBack} />
+      </Box>
       <ReactFlow
         nodes={nodes}
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
-        defaultZoom={0.6}
-        defaultPosition={[400, 50]}
+        defaultZoom={0.62}
+        defaultPosition={[400, 80]}
       >
         <MiniMap />
         <Controls />
