@@ -41,10 +41,11 @@ describe('HeroList Component', () => {
   });
 
   it('handles load more button click', async () => {
-    (getHeroes as jest.Mock).mockResolvedValue({
+    (getHeroes as jest.Mock).mockResolvedValueOnce({
       results: [
         { name: 'Hero 1', url: 'http://example.com/hero/1/' },
       ],
+      next: 'http://example.com/herolist/{page=nextPage}',
     });
 
     render(<HeroList />);
@@ -54,11 +55,15 @@ describe('HeroList Component', () => {
       expect(screen.getByText('Hero 1')).toBeInTheDocument();
     });
 
+    // Ensure the "Load More" button is present
+    expect(screen.getByText('Load More')).toBeInTheDocument();
+
     // Mock the API response for the next page
-    (getHeroes as jest.Mock).mockResolvedValue({
+    (getHeroes as jest.Mock).mockResolvedValueOnce({
       results: [
         { name: 'Hero 2', url: 'http://example.com/hero/2/' },
       ],
+      next: 'http://example.com/herolist/{page=nextPage}',
     });
 
     // Click the Load More button
