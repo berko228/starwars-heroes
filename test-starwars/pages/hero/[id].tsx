@@ -100,10 +100,24 @@ const HeroDetail: React.FC<HeroDetailProps> = ({ heroUrl }) => {
 
   if (!heroData)
     return (
-      <Heading padding={"25px"}>
-        Loading...
-        <Progress size="xs" hasStripe isIndeterminate colorScheme="purple" />
-      </Heading>
+      <Box
+        height="100vh"
+        width="100vw"
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        flexDirection="column"
+        gap="20px"
+      >
+        <Heading padding="25px">Loading...</Heading>
+        <Progress
+          size="xs"
+          hasStripe
+          isIndeterminate
+          colorScheme="blackAlpha"
+          width="80%"
+        />
+      </Box>
     ); // Small Loading Handling
 
   return (
@@ -113,10 +127,10 @@ const HeroDetail: React.FC<HeroDetailProps> = ({ heroUrl }) => {
         justifyContent="space-between"
         alignItems="center"
         paddingInline="30px"
-        position='absolute'
-        width={'100%'}
+        position="absolute"
+        width={"100%"}
       >
-        <Button colorScheme="red" onClick={handleBack} zIndex='100'>
+        <Button colorScheme="red" onClick={handleBack} zIndex="100">
           Back to the list
         </Button>
         <StarWarsIcon handleClick={handleBack} />

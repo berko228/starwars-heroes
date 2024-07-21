@@ -24,7 +24,7 @@ const HeroList: React.FC = () => {
 
         const heroesListResponse = await getHeroes(page);
 
-        if (!heroesListResponse?.next) { 
+        if (!heroesListResponse?.next) {
           setLoadButtonAvailable(false); // in case we don't have next page of heroes
         }
 
@@ -98,11 +98,7 @@ const HeroList: React.FC = () => {
           {loading ? <Spinner /> : "Load More"}
         </Button>
       ) : (
-        <Button
-          disabled={true}
-          margin="30px"
-          colorScheme="red"
-        >
+        <Button disabled={true} margin="30px" colorScheme="red">
           We have no more heroes
         </Button>
       )}
