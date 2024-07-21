@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Box, Button } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { getHeroes } from "../api/api";
+import { Spinner } from "@chakra-ui/react";
 
 interface Hero {
   name: string;
@@ -12,6 +13,8 @@ const HeroList: React.FC = () => {
   const [heroes, setHeroes] = useState<Hero[]>([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [isLoadButtonAvailable, setLoadButtonAvailable] = useState(true);
+
   const router = useRouter();
 
   useEffect(() => {
@@ -20,7 +23,15 @@ const HeroList: React.FC = () => {
         setLoading(true);
 
         const heroesListResponse = await getHeroes(page);
-        setHeroes((prevHeroes) => [...prevHeroes, ...heroesListResponse.results]);
+
+        if (!heroesListResponse?.next) { 
+          setLoadButtonAvailable(false); // in case we don't have next page of heroes
+        }
+
+        setHeroes((prevHeroes) => [
+          ...prevHeroes,
+          ...heroesListResponse.results,
+        ]);
       } catch (error) {
         console.error(error);
       } finally {
@@ -38,7 +49,7 @@ const HeroList: React.FC = () => {
   const handleSelectHero = (url: string) => {
     // spilting url to get the hero id
     const id = url.split("/").slice(-2, -1)[0];
-    
+
     router.push(`/hero/${id}`);
   };
 
@@ -76,9 +87,25 @@ const HeroList: React.FC = () => {
           </Box>
         ))}
       </Box>
-      <Button onClick={loadMore} disabled={loading} margin="30px">
-        {loading ? "Loading..." : "Load More"}
-      </Button>
+      {isLoadButtonAvailable ? (
+        <Button
+          onClick={loadMore}
+          disabled={loading}
+          margin="30px"
+          bg={"#000"}
+          color={"#fff"}
+        >
+          {loading ? <Spinner /> : "Load More"}
+        </Button>
+      ) : (
+        <Button
+          disabled={true}
+          margin="30px"
+          colorScheme="red"
+        >
+          We have no more heroes
+        </Button>
+      )}
     </Box>
   );
 };
